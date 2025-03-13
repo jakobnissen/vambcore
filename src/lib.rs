@@ -1,6 +1,5 @@
 // TODO
 // Docstrings
-// Go through for safety checks
 // Maybe refactor so it can be tested? Make tests work
 
 // Other things
@@ -17,7 +16,7 @@ use pyo3::prelude::*;
 const fn make_lut() -> [u8; 256] {
     let mut lut = [4u8; 256];
     let mut i: usize = 0;
-    while i < 256 {
+    while i < 128 {
         match i as u8 {
             b'A' | b'a' => lut[i] = 0,
             b'C' | b'c' => lut[i] = 1,
