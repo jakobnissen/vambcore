@@ -10,6 +10,8 @@
 
 // Also gzip de/compressor
 
+use std::borrow::Cow;
+
 use numpy::{PyReadwriteArray1, PyReadwriteArray2};
 use pyo3::prelude::*;
 
@@ -32,25 +34,21 @@ const fn make_lut() -> [u8; 256] {
 const LUT: [u8; 256] = make_lut();
 
 #[pyfunction]
-fn kmercounts(mut counts: PyReadwriteArray1<u32>, bytes: Vec<u8>, k: u8) {
-    if k == 0 || k > 7 {
-        panic!("k must be between 1 and 7");
-    }
-
+fn kmercounts(mut counts: PyReadwriteArray1<u32>, bytes: Cow<[u8]>) {
     let mut kmer = 0u32;
-    let mut countdown = k - 1;
-    let mask = (1u32 << (2 * k)) - 1;
+    let mut countdown = 3;
+    let mask = 0x000000ff;
     let counts_slice = counts.as_slice_mut().unwrap();
 
-    if counts_slice.len() != 1 << (2 * k) {
+    if counts_slice.len() != 256 {
         panic!("Counts array has wrong length");
     }
 
-    for &byte in bytes.as_slice() {
+    for &byte in bytes.iter() {
         // Safety: A u8 cannot be out of bounds for a length 256 array
         let &val = unsafe { LUT.get_unchecked(byte as usize) };
         if val == 4 {
-            countdown = k;
+            countdown = 4;
         }
 
         kmer = ((kmer << 2) | (val as u32)) & mask;
