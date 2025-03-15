@@ -9,5 +9,5 @@ name = "vambcore"
 crate-type = ["cdylib"]
 
 [dependencies]
-numpy = "0.23.0"
-pyo3 = "0.23.3"
+numpy = "0.24.0"
+pyo3 = "0.24.0"
